@@ -3,5 +3,9 @@
     {
         "ip": "localhost",
         "port": 55239
+    },
+    "database":
+    {
+        "uri": "postgres://localhost/fakedb"
     }
 }

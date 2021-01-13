@@ -5,13 +5,13 @@ from database import *
 #from pathlib import Path
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://localhost/fakedb'
-db = SQLAlchemy(app)
-
 # --- loads config.json
 config_file = open("./config.json")
 config = json.load(config_file)
 # ---
+
+app.config['SQLALCHEMY_DATABASE_URI'] = config["database"]["uri"]
+db = SQLAlchemy(app)
 
 from routes import *
         
