@@ -59,4 +59,8 @@ CREATE TABLE user_submission(
     marks FLOAT NOT NULL,
     user_query TEXT,
     UNIQUE(problem_id, assignment_code, user_username, course_code)
+<<<<<<< HEAD
 );
+=======
+);
+>>>>>>> ef4b2bd164b376fe79ed9fcc8185ac1b576081a2
