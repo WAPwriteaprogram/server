@@ -6,6 +6,6 @@
     },
     "database":
     {
-        "uri": "postgres://localhost/fakedb"
+        "uri": "postgres://localhost/fakedb_wap"
     }
 }

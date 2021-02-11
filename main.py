@@ -1,5 +1,5 @@
 #import routes
-from flask import Flask, request, make_response, send_from_directory, jsonify, redirect, url_for
+from flask import Flask, request, make_response, send_from_directory, jsonify, redirect, url_for, render_template
 import json
 from database import *
 #from pathlib import Path

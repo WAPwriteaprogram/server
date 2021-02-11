@@ -9,17 +9,23 @@ def test():
         print(request.headers)
         return str(request.headers) + "<br><br><br>Server runs successfully(maybe). Atleast it can serve this /test"
 
+@app.errorhandler(500)
+def error(e):
+    print(e)
+    return "Please contact MEC administrator"
+
 @app.route("/", methods = ["GET"])
 def landing():
     if request.method == "GET":
-        return "landing page"
+        #return send_from_directory("../client/Html/Pages/", "landingPage.html")
+        return render_template("landingPage.html")
         #return send_from_directory("../fakeclient/", "index.html")
     # return render_template("index.html")
     
 @app.route("/signup/", methods = ["GET", "POST"])
 def signup():
     if request.method == "GET":
-        return send_from_directory("../fakeclient/", "signup.html")
+        return render_template("signup.html")
         
     elif request.method == "POST":
         #print(request.form)
@@ -36,7 +42,7 @@ def signup():
         if user_object is not None:
             return "username taken"
         
-        user = User(username = username, email=email, password_hashed=password_hashed, privilage=0)
+        user = User(username=username, email=email, password_hashed=password_hashed, privilage=0)
         db.session.add(user)
         db.session.commit()
         
@@ -45,7 +51,7 @@ def signup():
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return send_from_directory("../fakeclient/", "login.html")
+        return render_template("login.html")
     
     elif request.method == "POST":
         username = request.form["username"]
@@ -58,3 +64,4 @@ def login():
             return "wrong password"
         else:
             return f"welcome {username}"
+            
