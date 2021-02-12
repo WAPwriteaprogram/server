@@ -19,13 +19,11 @@ def landing():
     if request.method == "GET":
         #return send_from_directory("../client/Html/Pages/", "landingPage.html")
         return render_template("landingPage.html")
-        #return send_from_directory("../fakeclient/", "index.html")
-    # return render_template("index.html")
     
 @app.route("/signup/", methods = ["GET", "POST"])
 def signup():
     if request.method == "GET":
-        return render_template("signup.html")
+        return render_template("auth/signup.html")
         
     elif request.method == "POST":
         #print(request.form)
@@ -46,12 +44,12 @@ def signup():
         db.session.add(user)
         db.session.commit()
         
-        return "registered"
+        return redirect(url_for("login"))
         
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("auth/login.html")
     
     elif request.method == "POST":
         username = request.form["username"]
@@ -65,3 +63,7 @@ def login():
         else:
             return f"welcome {username}"
             
+@app.route("/home/", methods=["GET", "POST"])
+def home():
+    if request.method == "GET":
+        return render_template("home.html")

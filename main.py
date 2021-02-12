@@ -3,7 +3,7 @@ from flask import Flask, request, make_response, send_from_directory, jsonify, r
 import json
 from database import *
 #from pathlib import Path
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../client/templates", static_folder="../client/static")
 
 # --- loads config.json
 config_file = open("./config.json")
