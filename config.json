@@ -7,5 +7,6 @@
     "database":
     {
         "uri": "postgres://localhost/fakedb_wap"
-    }
+    },
+    "secret_key": "l33t"
 }

@@ -28,7 +28,7 @@ def signup():
     elif request.method == "POST":
         #print(request.form)
         username = request.form["username"]
-        email = request.form["mail"]
+        email = request.form["email"]
         password = request.form["password"]
         password_hashed = pbkdf2_sha256.hash(password)
         

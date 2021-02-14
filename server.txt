@@ -7,6 +7,6 @@ psycopg2
 python
 "pip3 install flask"
 "pip3 install flask_sqlalchemy"
-"pip3 install psycopg"
+"pip3 install psycopg2"
 postgresql 13.1
 pgadmin

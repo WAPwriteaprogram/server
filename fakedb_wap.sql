@@ -59,8 +59,11 @@ CREATE TABLE user_submission(
     marks FLOAT NOT NULL,
     user_query TEXT,
     UNIQUE(problem_id, assignment_code, user_username, course_code)
-<<<<<<< HEAD
 );
-=======
+
+CREATE TABLE sessions(
+    id INTEGER PRIMARY KEY,
+    session_id VARCHAR(255) UNIQUE,
+    data BYTEA,
+    expiry TIMESTAMP
 );
->>>>>>> ef4b2bd164b376fe79ed9fcc8185ac1b576081a2
