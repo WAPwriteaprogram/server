@@ -32,6 +32,7 @@ def signup():
         password = request.form["password"]
         password_hashed = pbkdf2_sha256.hash(password)
         
+        #user_object = User.query.filter_by(email=email).first()
         user_object = User.query.filter_by(email=email).first()
         if user_object is not None:
             return "email taken"
@@ -40,7 +41,7 @@ def signup():
         if user_object is not None:
             return "username taken"
         
-        user = User(username=username, email=email, password_hashed=password_hashed, privilage=0)
+        user = User(username=username, email=email, password_hashed=password_hashed, privilege=0)
         db.session.add(user)
         db.session.commit()
         
@@ -61,9 +62,25 @@ def login():
         elif not pbkdf2_sha256.verify(password_entered, user_object.password_hashed):
             return "wrong password"
         else:
-            return f"welcome {username}"
+            session["username_sess"] = username
+            session["password_hashed_sess"] = password_entered
+            return f"welcome {session.get('username_sess')}"
             
 @app.route("/home/", methods=["GET", "POST"])
 def home():
     if request.method == "GET":
-        return render_template("home.html")
+        return f"welcome {session.get('username_sess')}"
+        #return render_template("home.html")
+
+@app.route("/api/<query>", methods=["GET", "POST"])
+def api(query):
+    user_object = User.query.filter_by(username=session.get("username_sess")).first()
+    if user_object is None:
+        return "username invalid"
+    elif not pbkdf2_sha256.verify(session.get("password_hashed_sess"), user_object.password_hashed):
+        return "wrong password"
+    else:
+        if query == "username" and request.method == "GET":
+            return jsonify(
+                username = user_object.username
+            )

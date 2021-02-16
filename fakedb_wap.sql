@@ -5,7 +5,7 @@ CREATE TABLE users(
     username VARCHAR(128) PRIMARY KEY,
     email VARCHAR(254) NOT NULL UNIQUE,
     password_hashed TEXT NOT NULL,
-    privilage SMALLINT NOT NULL,
+    privilege SMALLINT NOT NULL,
     courses_joined INTEGER []
 );
 
@@ -22,16 +22,16 @@ CREATE TABLE problem_pool(
 
 CREATE TABLE courses(
     id SERIAL,
-    course_code INTEGER PRIMARY KEY,
+    course_code VARCHAR(10) PRIMARY KEY,
     course_name VARCHAR(128) NOT NULL,
-    studets VARCHAR(128) [],
+    studets VARCHAR(128) [], -- students
     instructors VARCHAR(128) [],
     assignments INTEGER []
 );
 
 CREATE TABLE assignment(
     assignment_code INTEGER NOT NULL,
-    course_code INTEGER NOT NULL REFERENCES courses(course_code),
+    course_code VARCHAR(10) NOT NULL REFERENCES courses(course_code),
     assignment_name VARCHAR(128) NOT NULL,
     due TIMESTAMP WITHOUT TIME ZONE,
     public BOOLEAN NOT NULL,
@@ -42,17 +42,18 @@ CREATE TABLE assignment(
 
 CREATE TABLE question(
     assignment_code INTEGER NOT NULL,
-    course_code INTEGER NOT NULL REFERENCES courses(course_code),
+    course_code VARCHAR(10) NOT NULL REFERENCES courses(course_code),
     problem_id BIGINT NOT NULL REFERENCES problem_pool(problem_id),
     max_marks FLOAT NOT NULL,
     test_case_weightage FLOAT [] NOT NULL,  -- default=0(test case wouldnt matter), can be 0.5x, 0.25x
-    UNIQUE(assignment_code, course_code, problem_id)
+    UNIQUE(assignment_code, course_code, problem_id),
+    test_case_public BOOLEAN [] NOT NULL
 );
 
 CREATE TABLE user_submission(
     problem_id BIGINT NOT NULL REFERENCES problem_pool(problem_id),
     assignment_code INTEGER NOT NULL,
-    course_code INTEGER NOT NULL REFERENCES courses(course_code),
+    course_code VARCHAR(10) NOT NULL REFERENCES courses(course_code),
     user_username VARCHAR(128) NOT NULL REFERENCES users(username),
     user_solution TEXT,
     test_case_satisfied BOOLEAN [] NOT NULL,
@@ -61,9 +62,9 @@ CREATE TABLE user_submission(
     UNIQUE(problem_id, assignment_code, user_username, course_code)
 );
 
-CREATE TABLE sessions(
-    id INTEGER PRIMARY KEY,
-    session_id VARCHAR(255) UNIQUE,
-    data BYTEA,
-    expiry TIMESTAMP
-);
+-- CREATE TABLE sessions(
+--     id INTEGER PRIMARY KEY,
+--     session_id VARCHAR(255) UNIQUE,
+--     data BYTEA,
+--     expiry TIMESTAMP
+-- );

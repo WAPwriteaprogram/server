@@ -1,8 +1,8 @@
 #import routes
-from flask import Flask, request, make_response, send_from_directory, jsonify, redirect, url_for, render_template
-from flask_session import Session
+from flask import Flask, request, make_response, send_from_directory, jsonify, redirect, url_for, render_template, session
+from flask_session import Session as Sess
 import json
-#from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 from database import *
 #from pathlib import Path
@@ -13,12 +13,16 @@ config_file = open("./config.json")
 config = json.load(config_file)
 # ---
 
-app.config['SQLALCHEMY_DATABASE_URI'] = config["database"]["uri"]
 db = SQLAlchemy(app)
-#db = declarative_base(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = config["database"]["uri"]
+app.config['SESSION_TYPE'] = "sqlalchemy"
+app.config['SESSION_SQLALCHEMY'] = db
+#db = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 
 app.config['SECRET_KEY'] = config["secret_key"]
-sess = Session(app)
+Sess(app)
+#db.create_all()
 
 from routes import *
         
