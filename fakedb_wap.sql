@@ -6,7 +6,9 @@ CREATE TABLE users(
     email VARCHAR(254) NOT NULL UNIQUE,
     password_hashed TEXT NOT NULL,
     privilege SMALLINT NOT NULL,
-    courses_joined INTEGER []
+    courses_joined INTEGER [],
+    section VARCHAR(10),
+    batch VARCHAR(10)
 );
 
 CREATE TABLE problem_pool(
@@ -24,7 +26,7 @@ CREATE TABLE courses(
     id SERIAL,
     course_code VARCHAR(10) PRIMARY KEY,
     course_name VARCHAR(128) NOT NULL,
-    studets VARCHAR(128) [], -- students
+    students VARCHAR(128) [],
     instructors VARCHAR(128) [],
     assignments INTEGER []
 );
@@ -68,3 +70,11 @@ CREATE TABLE user_submission(
 --     data BYTEA,
 --     expiry TIMESTAMP
 -- );
+
+
+
+
+
+-- update users
+-- set privilege=2
+-- where username='user1';

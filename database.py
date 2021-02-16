@@ -16,7 +16,20 @@ class User(db.Model):
     '''
     privilege = db.Column(db.SmallInteger, nullable=False)
     courses_joined = db.Column(db.ARRAY(db.Integer))
+    batch = db.Column(db.String(10))
+    section = db.Column(db.String(10))
 
+    
+class Course(db.Model):
+    __tablename__ = 'courses'
+
+    id = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
+    course_code = db.Column(db.String(10), primary_key=True)
+    course_name = db.Column(db.String(128), nullable=False)
+    students = db.Column(db.ARRAY(db.VARCHAR(length=128)))
+    instructors = db.Column(db.ARRAY(db.VARCHAR(length=128)))
+    assignments = db.Column(db.ARRAY(db.INTEGER()))
+    
 class Session(db.Model):
     __tablename__ = "sessions"
 

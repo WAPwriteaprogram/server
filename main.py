@@ -10,17 +10,16 @@ app = Flask(__name__, template_folder="../client/templates", static_folder="../c
 
 # --- loads config.json
 config_file = open("./config.json")
-config = json.load(config_file)
+config_server = json.load(config_file)
 # ---
+app.config['SQLALCHEMY_DATABASE_URI'] = config_server["database"]["uri"]
+app.config['SESSION_TYPE'] = "sqlalchemy"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = config["database"]["uri"]
-app.config['SESSION_TYPE'] = "sqlalchemy"
 app.config['SESSION_SQLALCHEMY'] = db
-#db = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 
-app.config['SECRET_KEY'] = config["secret_key"]
+app.config['SECRET_KEY'] = config_server["secret_key"]
 Sess(app)
 #db.create_all()
 
@@ -28,5 +27,5 @@ from routes import *
         
 # --- runs the app
 if __name__ == "__main__":
-    app.run(host = config["socket"]["ip"], port = config["socket"]["port"])
+    app.run(host = config_server["socket"]["ip"], port = config_server["socket"]["port"])
 # ---

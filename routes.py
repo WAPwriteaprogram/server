@@ -64,6 +64,7 @@ def login():
         else:
             session["username_sess"] = username
             session["password_hashed_sess"] = password_entered
+            session["privilege_sess"] = user_object.privilege
             return f"welcome {session.get('username_sess')}"
             
 @app.route("/home/", methods=["GET", "POST"])
@@ -75,12 +76,34 @@ def home():
 @app.route("/api/<query>", methods=["GET", "POST"])
 def api(query):
     user_object = User.query.filter_by(username=session.get("username_sess")).first()
+    #print(user_object.batch)
     if user_object is None:
-        return "username invalid"
+        return "No session detected"
     elif not pbkdf2_sha256.verify(session.get("password_hashed_sess"), user_object.password_hashed):
-        return "wrong password"
+        return "Dont try this. We are logging your activity"
     else:
-        if query == "username" and request.method == "GET":
+        if query == "user" and request.method == "GET":
             return jsonify(
-                username = user_object.username
+                username=user_object.username,
+                email=user_object.email,
+                privilege=user_object.privilege,
+                courses_joined=user_object.courses_joined
             )
+        if query == "add_course" and request.method == "POST":
+            if session.get("privilege_sess") == 0:
+                return "Requires admin/instructor privilege"
+                
+            add_course_json = request.get_json(force=True)
+            users_object = User.query.filter_by(batch=add_course_json["batch"], section=add_course_json["section"]).all()
+            
+            course = Course(
+                course_code=add_course_json["course_code"],
+                course_name=add_course_json["course_name"],
+                students=add_course_json["students"],
+                instructors=add_course_json["instructors"]
+            )
+            db.session.add(course)
+            db.session.commit()
+            return f"{add_course_json['students']}"
+        else:
+            return "Check API query again"
