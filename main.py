@@ -1,10 +1,10 @@
 #import routes
-from flask import Flask, request, make_response, send_from_directory, jsonify, redirect, url_for, render_template, session
+from flask import Flask
 from flask_session import Session as Sess
 import json
-from flask_sqlalchemy import SQLAlchemy
-
+#from flask_sqlalchemy import SQLAlchemy
 from database import *
+
 #from pathlib import Path
 app = Flask(__name__, template_folder="../client/templates", static_folder="../client/static")
 
