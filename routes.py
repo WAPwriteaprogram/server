@@ -1,6 +1,7 @@
 from flask import request, make_response, send_from_directory, jsonify, redirect, url_for, render_template, session
 from main import *
 from passlib.hash import pbkdf2_sha256
+import re
 
 @app.route("/test/", methods = ["GET"])
 def test():
@@ -22,29 +23,27 @@ def signup():
     if request.method == "GET":
         return render_template("auth/signup.html")
         
-    else:
-        #print(request.form)
-        try:
-            username = request.form["username"]
-            email = request.form["email"]
-            password = request.form["password"]
-            password_hashed = pbkdf2_sha256.hash(password)
-        except:
-            return "invalid POST request"
+    #print(request.form)
+    username = request.form["username"]
+    email = request.form["email"]
+    password = request.form["password"]
+    password_hashed = pbkdf2_sha256.hash(password)
+    
+    if not re.match("^[A-Za-z0-9]+$", username):
+        return "invalid username characters. Only letters and 0-9 allowed"
+		
+    user_object = User.query.filter_by(email=email).first()
+    if user_object is not None:
+        return "email taken"
+    user_object = User.query.filter_by(username=username).first()
+    if user_object is not None:
+        return "username taken"
+    
+    user = User(username=username, email=email, password_hashed=password_hashed, privilege=2)
+    db.session.add(user)
+    db.session.commit()
         
-        user_object = User.query.filter_by(email=email).first()
-        if user_object is not None:
-            return "email taken"
-            
-        user_object = User.query.filter_by(username=username).first()
-        if user_object is not None:
-            return "username taken"
-        
-        user = User(username=username, email=email, password_hashed=password_hashed, privilege=0)
-        db.session.add(user)
-        db.session.commit()
-        
-        return redirect(url_for("login"))
+    return redirect(url_for("login"))
         
 @app.route("/login/", methods=["GET", "POST"])
 def login():
@@ -81,14 +80,15 @@ def api_get(query):
     if user_object is None:
         return "No session detected"
     elif not pbkdf2_sha256.verify(session.get("password_hashed_sess"), user_object.password_hashed):
-        return "Dont try this. We are logging your activity"
+        return "Invalid password. We are logging your activity"
     else:
         if query == "user":
             return jsonify(
                 username=user_object.username,
                 email=user_object.email,
                 privilege=user_object.privilege,
-                courses_joined=user_object.courses_joined
+                section=user_object.section,
+				batch=user_object.batch
             )
             
 @app.route("/api/<query>", methods=["POST"])
@@ -98,21 +98,19 @@ def api_post(query):
             return "Requires admin/instructor privilege"
             
         add_course_json = request.get_json(force=True)
-        users_object = User.query.filter_by(batch=add_course_json["batch"], section=add_course_json["section"]).all()
-        if users_object is None:
-            return "No users found"
+        # users_object = User.query.filter_by(batch=add_course_json["batch"], section=add_course_json["section"]).all()
+        # if users_object is None:
+        #     return "No users found"
         course_object = Course.query.filter_by(course_code=add_course_json["course_code"]).first()
         if not course_object is None:
             return "Course code taken"
         
-        # course = Course(
-        #     course_code=add_course_json["course_code"],
-        #     course_name=add_course_json["course_name"],
-        #     students=add_course_json["students"],
-        #     instructors=add_course_json["instructors"]
-        # )
-        # db.session.add(course)
-        # db.session.commit()
-        return f"{add_course_json['students']}"
+        course = Course(
+            course_code=add_course_json["course_code"],
+            course_name=add_course_json["course_name"]
+        )
+        db.session.add(course)
+        db.session.commit()
+        return "added course"
     else:
         return "Check API query again"

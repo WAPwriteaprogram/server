@@ -21,7 +21,7 @@ app.config['SESSION_SQLALCHEMY'] = db
 
 app.config['SECRET_KEY'] = config_server["secret_key"]
 Sess(app)
-#db.create_all()
+db.create_all()
 
 from routes import *
         

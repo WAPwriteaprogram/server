@@ -6,7 +6,7 @@
     },
     "database":
     {
-        "uri": "postgres://localhost/wap"
+        "uri": "postgres:///wap"
     },
     "secret_key": "l33t"
 }
