@@ -114,3 +114,7 @@ def api_post(query):
         return "added course"
     else:
         return "Check API query again"
+
+@app.route("/admin/add_course/", methods=["GET"])
+def add_course():
+    return render_template("addCourse.html")
